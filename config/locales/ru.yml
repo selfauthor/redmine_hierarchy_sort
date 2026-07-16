@@ -1,0 +1,35 @@
+# redmine_hierarchy_sort/config/locales/ru.yml
+ru:
+  hierarchy_sort:
+    # Чекбоксы в блоке "Опции"
+    tree_checkbox: "Дерево подзадач"
+    relations_checkbox: "Показывать связи"
+    
+    # Заголовки блоков
+    child_filters_block: "Фильтры подзадач"
+    child_sort_block: "Сортировка подзадач"
+    
+    # Tooltip для иконки связей
+    relations_tooltip: "Связи"
+    
+    # Типы связей (используются стандартные Redmine)
+    relation_types:
+      relates: "связана с"
+      duplicates: "дублирует"
+      duplicated_by: "дублируется"
+      blocks: "блокирует"
+      blocked_by: "блокируется"
+      precedes: "предшествует"
+      follows: "следует за"
+      copied_to: "скопирована в"
+      copied_from: "скопирована из"
+    
+    # Иконки направлений
+    direction_outgoing: "→"
+    direction_incoming: "←"
+    direction_bidirectional: "↔"
+    
+    # Ошибки и сообщения
+    errors:
+      invalid_filter: "Некорректный фильтр подзадач"
+      invalid_sort: "Некорректная сортировка подзадач"
