@@ -9,6 +9,10 @@ en:
     child_filters_block: "Subtasks filters"
     child_sort_block: "Subtasks sorting"
     
+    # Information messages
+    child_filters_info: "Filters apply to child tasks. If a task does not pass the filter, it and all its descendants will not be shown."
+    child_sort_info: "Sorting applies only to tasks at the same level (siblings). Nested levels always follow the parent."
+    
     # Tooltip for relations icon
     relations_tooltip: "Relations"
     

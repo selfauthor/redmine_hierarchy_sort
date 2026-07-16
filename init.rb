@@ -24,4 +24,15 @@ Redmine::Plugin.register :redmine_hierarchy_sort do
       IssueQuery.send(:include, RedmineHierarchySort::IssueQueryPatch)
     end
   end
+
+  # Хуки для расширения UI
+  hooks do
+    # Блок 1: Добавление чекбоксов в форму запроса (после блока "Показать")
+    helper :QueriesHelper do
+      def render_hierarchy_options(query)
+        render :partial => 'queries/hierarchy_options', :locals => {:query => query}
+      end
+    end
+  end
+
 end

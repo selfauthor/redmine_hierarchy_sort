@@ -1,0 +1,20 @@
+<%# app/views/queries/_hierarchy_options.html.erb %>
+<%# Partial для добавления чекбоксов "Дерево подзадач" и "Показывать связи" в блок "Опции" %>
+
+<p id="hierarchy_options">
+  <label><%= l(:button_show) %></label>
+  <label class="inline">
+    <%= check_box_tag 'query[hierarchy_enabled]', '1', @query.hierarchy_enabled, 
+        :id => 'query_hierarchy_enabled',
+        :data => { 
+          :enables => '#child_filters_fieldset, #child_sort_fieldset',
+          :disables => '#options fieldset:not(#hierarchy_options)'
+        } %>
+    <%= l(:hierarchy_sort.tree_checkbox) %>
+  </label>
+  <label class="inline">
+    <%= check_box_tag 'query[show_relations]', '1', @query.show_relations, 
+        :id => 'query_show_relations' %>
+    <%= l(:hierarchy_sort.relations_checkbox) %>
+  </label>
+</p>
