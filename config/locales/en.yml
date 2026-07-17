@@ -16,18 +16,6 @@ en:
     # Tooltip for relations icon
     relations_tooltip: "Relations"
     
-    # Relation types (using standard Redmine labels)
-    relation_types:
-      relates: "relates to"
-      duplicates: "duplicates"
-      duplicated_by: "duplicated by"
-      blocks: "blocks"
-      blocked_by: "blocked by"
-      precedes: "precedes"
-      follows: "follows"
-      copied_to: "copied to"
-      copied_from: "copied from"
-    
     # Direction icons
     direction_outgoing: "→"
     direction_incoming: "←"

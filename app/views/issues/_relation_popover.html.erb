@@ -1,0 +1,26 @@
+<%# app/views/issues/_relation_popover.html.erb %>
+<%# Всплывающее окно со связями задачи %>
+<div id="relation-popover-<%= issue.id %>" class="hierarchy-relation-popover" style="display:none;">
+  <div class="hierarchy-popover-header">
+    <span class="hierarchy-popover-title"><%= l(:hierarchy_sort.relations_tooltip) %></span>
+    <a href="#" class="hierarchy-popover-close">✕</a>
+  </div>
+  <div class="hierarchy-popover-content">
+    <% groups.each do |type, items| %>
+      <div class="hierarchy-relation-group">
+        <div class="hierarchy-relation-group-title">
+          <%# Используем стандартные языковые ключи Redmine для типов связей %>
+          <%= l(IssueRelation::TYPES[type][:name]) %>
+        </div>
+        <% items.each do |item| %>
+          <div class="hierarchy-relation-item">
+            <span class="hierarchy-relation-direction <%= item[:direction] %>"></span>
+            <%# Номер задачи кликабельный, тема - просто текст %>
+            <%= link_to "##{item[:issue].id}", issue_path(item[:issue]), class: 'hierarchy-relation-issue-number' %>
+            <span class="hierarchy-relation-issue-subject"><%= item[:issue].subject %></span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

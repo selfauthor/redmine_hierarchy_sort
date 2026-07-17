@@ -16,18 +16,6 @@ ru:
     # Tooltip для иконки связей
     relations_tooltip: "Связи"
     
-    # Типы связей (используются стандартные Redmine)
-    relation_types:
-      relates: "связана с"
-      duplicates: "дублирует"
-      duplicated_by: "дублируется"
-      blocks: "блокирует"
-      blocked_by: "блокируется"
-      precedes: "предшествует"
-      follows: "следует за"
-      copied_to: "скопирована в"
-      copied_from: "скопирована из"
-    
     # Иконки направлений
     direction_outgoing: "→"
     direction_incoming: "←"

@@ -1,0 +1,8 @@
+<%# app/views/issues/_relation_icon.html.erb %>
+<%# Иконка связей, отображается перед кнопкой "..." %>
+<% if @query.show_relations && issue.relations.present? %>
+  <span class="hierarchy-relation-icon" data-issue-id="<%= issue.id %>" title="<%= l(:hierarchy_sort.relations_tooltip) %>">
+    <%# Используем стандартную иконку Redmine для связей/ссылок %>
+    <%= sprite_icon('link') %>
+  </span>
+<% end %>
