@@ -231,5 +231,15 @@
     init: initHierarchySortUI,
     togglePopover: toggleRelationPopover
   };
+
+  // Блок 35: Обработчик для чекбокса hierarchy_enabled (если форма уже загружена)
+  $(document).on('change', '#query_hierarchy_enabled', function() {
+    var isChecked = $(this).is(':checked');
+    if (isChecked) {
+      $('#child_filters_fieldset, #child_sort_fieldset').show();
+    } else {
+      $('#child_filters_fieldset, #child_sort_fieldset').hide();
+    }
+  });
   
 })(jQuery);
