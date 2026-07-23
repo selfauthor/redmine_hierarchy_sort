@@ -1,4 +1,6 @@
-# redmine_hierarchy_sort/init.rb
+require 'redmine'
+
+# Блок 1: Регистрация плагина в Redmine
 Redmine::Plugin.register :redmine_hierarchy_sort do
   name 'Иерархия задач с сортировкой и связями'
   author 'Андрей Якушев'
@@ -6,33 +8,26 @@ Redmine::Plugin.register :redmine_hierarchy_sort do
   url 'https://github.com/selfauthor/redmine_hierarchy_sort'
   description 'Плагин для иерархической сортировки задач с сохранением древовидной структуры и визуализацией связей'
   version '1.0.0'
-  
-  # Требования к версии Redmine
   requires_redmine :version_or_higher => '5.0.0'
-  
-  # Подключение патчей к моделям
-  to_prepare do
-    # Патч для модели Query (добавление атрибутов для иерархической сортировки)
-    unless Query.respond_to?(:hierarchy_enabled)
-      require_dependency 'query'
-      Query.send(:include, RedmineHierarchySort::QueryPatch)
-    end
-    
-    # Патч для модели IssueQuery (переопределение метода issues)
-    unless IssueQuery.instance_methods.include?(:issues_with_hierarchy)
-      require_dependency 'issue_query'
-      IssueQuery.send(:include, RedmineHierarchySort::IssueQueryPatch)
-    end
+end
+
+# Блок 2: Инициализация после загрузки всего приложения (Rails 7 + Zeitwerk)
+Rails.application.config.after_initialize do
+  # Блок 3: Патчим модель Query — добавляем опции иерархии и show_relations
+  unless Query.instance_methods.include?(:hierarchy_enabled)
+    Query.send(:include, RedmineHierarchySort::QueryPatch)
   end
 
-  # Хуки для расширения UI
-  hooks do
-    # Блок 1: Добавление чекбоксов в форму запроса (после блока "Показать")
-    helper :QueriesHelper do
-      def render_hierarchy_options(query)
-        render :partial => 'queries/hierarchy_options', :locals => {:query => query}
-      end
-    end
+  # Блок 4: Патчим модель IssueQuery — переопределяем выборку задач и подсчет
+  unless IssueQuery.instance_methods.include?(:issues_with_hierarchy)
+    IssueQuery.send(:include, RedmineHierarchySort::IssueQueryPatch)
   end
 
+  # Блок 5: Подключаем хелпер во все view-контексты
+  if defined?(HierarchySortHelper)
+    # Включение в базовый класс гарантирует доступность во ВСЕХ view
+    unless ActionView::Base.included_modules.include?(HierarchySortHelper)
+      ActionView::Base.send(:include, HierarchySortHelper)
+    end
+  end
 end

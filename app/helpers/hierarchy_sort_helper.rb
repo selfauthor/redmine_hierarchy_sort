@@ -1,5 +1,6 @@
 # app/helpers/hierarchy_sort_helper.rb
 module HierarchySortHelper
+
   # Функция: Рендеринг иконки связей для задачи
   # Блок 1: Иконка показывается только если включена опция show_relations и у задачи есть связи
   def render_relation_icon(issue)
