@@ -37,6 +37,7 @@
   padding: 2px 4px;
   border-radius: 3px;
   transition: background-color 0.2s;
+  vertical-align: middle;
 }
 
 .hierarchy-relation-icon:hover {
@@ -178,19 +179,7 @@
   white-space: nowrap;
 }
 
-/* Блок 13: Адаптация для мобильных устройств */
-@media (max-width: 768px) {
-  .hierarchy-relation-popover {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: none;
-  }
-}
-
-/* Блок 14: Стили для фильтров подзадач (ТОЧНАЯ КОПИЯ из ядра Redmine) */
+/* Блок 13: Стили для фильтров подзадач (ТОЧНАЯ КОПИЯ из ядра Redmine) */
 #child_filters-table {
   float: left;
   width: auto;
@@ -233,7 +222,7 @@
   clear: both;
 }
 
-/* Блок 15: Сортировка подзадач */
+/* Блок 14: Сортировка подзадач */
 #child_sort_fieldset select {
   margin-right: 5px;
 }
