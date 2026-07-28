@@ -52,6 +52,12 @@ module RedmineHierarchySort
       order_clause = query.sort_clause
       scope = scope.order(order_clause) if order_clause.present?
 
+      # ИСПРАВЛЕНО: Добавляем JOIN'ы для сортировки корней (аналогично стандартному issues)
+      if order_clause.present?
+        joins_clause = query.joins_for_order_statement(order_clause.map(&:to_s).join(','))
+        scope = scope.joins(joins_clause) if joins_clause.present?
+      end
+
       # Выбираем только необходимые поля и преобразуем в массив хэшей
       scope.pluck(:id, :parent_id).map do |id, parent_id|
         { id: id, parent_id: parent_id }
@@ -101,7 +107,12 @@ module RedmineHierarchySort
 
       # Применяем сортировку потомков, если она задана
       child_order = build_child_order_clause
-      scope = scope.order(child_order) if child_order.present?
+      if child_order.present?
+        scope = scope.order(child_order)
+        # ИСПРАВЛЕНО: Добавляем JOIN'ы для сортировки потомков
+        joins_clause = build_child_joins(child_order)
+        scope = scope.joins(joins_clause) if joins_clause.present?
+      end
 
       # Загружаем только ID потомков (уже отсортированные SQL-запросом)
       child_ids = scope.pluck(:id)
@@ -146,17 +157,34 @@ module RedmineHierarchySort
       temp_query.sort_clause
     end
 
+    # Функция: Построение JOIN'ов для сортировки потомков
+    # Блок 9: Используем метод joins_for_order_statement из временного запроса
+    def build_child_joins(order_clause)
+      return nil unless order_clause.present?
+      
+      # Создаем временный запрос для генерации JOIN'ов
+      temp_query = IssueQuery.new(:project => query.project)
+      temp_query.send(:initialize_available_filters)
+      temp_query.available_columns
+      
+      # Преобразуем order_clause в строку для joins_for_order_statement
+      order_string = order_clause.map(&:to_s).join(',')
+      
+      # Генерируем JOIN'ы
+      temp_query.joins_for_order_statement(order_string)
+    end
+
     # Функция: "Тяжелая" загрузка полных объектов задач
-    # Блок 9: Загружаем задачи по списку ID с необходимыми includes и сортируем в Ruby
+    # Блок 10: Загружаем задачи по списку ID с необходимыми includes и сортируем в Ruby
     def load_full_issues(ids)
       # Если список ID пуст, возвращаем пустой массив
       return [] if ids.empty?
 
       # Формируем базовый скоуп с необходимыми includes
-      # Включаем все стандартные ассоциации, которые использует Redmine для отображения
+      # ИСПРАВЛЕНО: убрано :relations из списка includes
       scope = Issue.where(id: ids).preload(:priority).includes([
         :status, :project, :tracker, :author, :assigned_to, 
-        :fixed_version, :category, :attachments, :relations
+        :fixed_version, :category, :attachments
       ])
 
       # Загружаем задачи
@@ -176,7 +204,7 @@ module RedmineHierarchySort
     end
 
     # Функция: Применение условной предзагрузки данных
-    # Блок 10: Вызываем стандартные методы Redmine для загрузки дополнительных данных, если нужные колонки выбраны
+    # Блок 11: Вызываем стандартные методы Redmine для загрузки дополнительных данных, если нужные колонки выбраны
     def apply_conditional_preloading(issues)
       # Загружаем затраченные часы, если выбрана соответствующая колонка
       if query.has_column?(:spent_hours)
@@ -196,6 +224,11 @@ module RedmineHierarchySort
       # Загружаем последние заметки
       if query.has_column?(:last_notes)
         Issue.load_visible_last_notes(issues)
+      end
+
+      # ИСПРАВЛЕНО: Загружаем связи, если выбрана соответствующая колонка
+      if query.has_column?(:relations)
+        Issue.load_visible_relations(issues)
       end
     end
   end

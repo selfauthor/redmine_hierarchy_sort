@@ -10,11 +10,11 @@
           :enables => '#child_filters_fieldset, #child_sort_fieldset',
           :disables => '#options fieldset:not(#hierarchy_options)'
         } %>
-    <%= l(:hierarchy_sort.tree_checkbox) %>
+    <%= l('hierarchy_sort.tree_checkbox') %>
   </label>
   <label class="inline">
     <%= check_box_tag 'query[show_relations]', '1', @query.show_relations, 
         :id => 'query_show_relations' %>
-    <%= l(:hierarchy_sort.relations_checkbox) %>
+    <%= l('hierarchy_sort.relations_checkbox') %>
   </label>
 </p>

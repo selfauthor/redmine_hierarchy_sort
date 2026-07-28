@@ -1,4 +1,10 @@
 <%# app/views/queries/_form.html.erb %>
+<%# Подключаем assets плагина для формы запроса %>
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'hierarchy_sort', plugin: 'redmine_hierarchy_sort' %>
+  <%= stylesheet_link_tag 'hierarchy_sort', plugin: 'redmine_hierarchy_sort' %>
+<% end %>
+
 <%= error_messages_for 'query' %>
 <div class="box">
   <div class="tabular">
@@ -83,11 +89,11 @@
         <p id="hierarchy_options">
           <label class="inline">
             <%= check_box_tag 'query[hierarchy_enabled]', '1', @query.hierarchy_enabled, :id => 'query_hierarchy_enabled' %>
-            <%= l(:hierarchy_sort.tree_checkbox) %>
+            <%= l('hierarchy_sort.tree_checkbox') %>
           </label>
           <label class="inline">
             <%= check_box_tag 'query[show_relations]', '1', @query.show_relations, :id => 'query_show_relations' %>
-            <%= l(:hierarchy_sort.relations_checkbox) %>
+            <%= l('hierarchy_sort.relations_checkbox') %>
           </label>
         </p>
         <%# ------------------------------------------ %>
@@ -119,16 +125,9 @@
     </fieldset>
 
     <%# --- НАШИ ДОБАВЛЕНИЯ: Блоки фильтров и сортировки подзадач --- %>
-    <% if @query.hierarchy_enabled %>
-      <fieldset id="child_filters_fieldset">
-        <legend><%= l(:hierarchy_sort.child_filters_block) %></legend>
-        <%= render :partial => 'queries/child_filters', :locals => {:query => @query} %>
-      </fieldset>
-      <fieldset id="child_sort_fieldset">
-        <legend><%= l(:hierarchy_sort.child_sort_block) %></legend>
-        <%= render :partial => 'queries/child_sort_criteria', :locals => {:query => @query} %>
-      </fieldset>
-    <% end %>
+    <%# Рендерим всегда — partial сам управляет видимостью через inline style %>
+    <%= render :partial => 'queries/child_filters', :locals => {:query => @query} %>
+    <%= render :partial => 'queries/child_sort_criteria', :locals => {:query => @query} %>
     <%# ------------------------------------------------------------------ %>
   <% end %>
 

@@ -16,16 +16,6 @@
 #child_filters_fieldset,
 #child_sort_fieldset {
   margin-top: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 3px;
-}
-
-#child_filters_fieldset legend,
-#child_sort_fieldset legend {
-  font-weight: bold;
-  color: #333;
-  padding: 0 5px;
 }
 
 /* Блок 3: Информационные сообщения */
@@ -52,11 +42,6 @@
 .hierarchy-relation-icon:hover {
   background-color: #e0e0e0;
   color: #333;
-}
-
-.hierarchy-relation-icon:before {
-  content: "🔗";
-  font-size: 12px;
 }
 
 /* Блок 5: Tooltip для иконки связей */
@@ -205,28 +190,47 @@
   }
 }
 
-/* Блок 14: Стили для таблицы фильтров подзадач */
+/* Блок 14: Стили для фильтров подзадач (ТОЧНАЯ КОПИЯ из ядра Redmine) */
 #child_filters-table {
-  width: 100%;
-  margin-top: 10px;
+  float: left;
+  width: auto;
 }
 
-#child_filters-table tr.filter {
-  background-color: #fff;
+#child_filters-table .field {
+  width: 230px;
 }
 
-#child_filters-table tr.filter:hover {
-  background-color: #f5f5f5;
+#child_filters-table .filter {
+  margin: 5px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
 }
 
-#child_filters-table td {
-  padding: 4px;
-  vertical-align: middle;
+#child_filters-table .filter .operator select {
+  width: 120px;
 }
 
-#child_filters-table td.buttons {
+#child_filters_fieldset .add-filter {
+  width: 35%;
+  float: right;
   text-align: right;
-  width: 30px;
+  vertical-align: top;
+}
+
+#child_filters_fieldset .add-filter label {
+  margin-right: 5px;
+}
+
+#child_filters_fieldset .add-filter select {
+  min-width: 200px;
+}
+
+/* Очистка float для fieldset */
+#child_filters_fieldset::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 /* Блок 15: Сортировка подзадач */
@@ -236,7 +240,5 @@
 
 .query_sort_criteria_count {
   display: inline-block;
-  width: 20px;
-  font-weight: bold;
-  color: #666;
+  min-width: 1em;
 }

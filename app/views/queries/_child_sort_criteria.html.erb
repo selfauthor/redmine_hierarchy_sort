@@ -1,11 +1,10 @@
 <%# app/views/queries/_child_sort_criteria.html.erb %>
 <%# Partial для блока "Сортировка подзадач" %>
-
-<fieldset id="child_sort_fieldset" style="<%= 'display: none;' unless @query.hierarchy_enabled %>">
-  <legend><%= l(:hierarchy_sort.child_sort_block) %></legend>
+<fieldset id="child_sort_fieldset" style="<%= 'display: none;' unless query.hierarchy_enabled %>">
+  <legend><%= l('hierarchy_sort.child_sort_block') %></legend>
   
   <div id="child_sort_info" style="margin-bottom: 10px; color: #666; font-style: italic;">
-    <%= l(:hierarchy_sort.child_sort_info) %>
+    <%= l('hierarchy_sort.child_sort_info') %>
   </div>
   
   <% 3.times do |i| %>
@@ -13,14 +12,14 @@
   <%= label_tag "child_sort_criteria_attribute_" + i.to_s,
       l(:description_query_sort_criteria_attribute), :class => "hidden-for-sighted" %>
   <%= select_tag("child_sort_criteria[#{i}][]",
-      options_for_select([[]] + @query.available_columns.select(&:sortable?).collect {|column| [column.caption, column.name.to_s]}, 
-                        @query.child_sort_criteria[i] ? @query.child_sort_criteria[i][0] : nil),
+      options_for_select([[]] + query.available_columns.select(&:sortable?).collect {|column| [column.caption, column.name.to_s]}, 
+                        query.child_sort_criteria[i] ? query.child_sort_criteria[i][0] : nil),
       :id => "child_sort_criteria_attribute_" + i.to_s)%>
   <%= label_tag "child_sort_criteria_direction_" + i.to_s,
       l(:description_query_sort_criteria_direction), :class => "hidden-for-sighted" %>
   <%= select_tag("child_sort_criteria[#{i}][]",
       options_for_select([[], [l(:label_ascending), 'asc'], [l(:label_descending), 'desc']], 
-                        @query.child_sort_criteria[i] ? @query.child_sort_criteria[i][1] : nil),
+                        query.child_sort_criteria[i] ? query.child_sort_criteria[i][1] : nil),
       :id => "child_sort_criteria_direction_" + i.to_s) %>
   <br />
   <% end %>

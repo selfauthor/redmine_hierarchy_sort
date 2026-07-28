@@ -1,11 +1,10 @@
 <%# app/views/queries/_child_filters.html.erb %>
 <%# Partial для блока "Фильтры подзадач" %>
-
-<fieldset id="child_filters_fieldset" style="<%= 'display: none;' unless @query.hierarchy_enabled %>">
-  <legend><%= l(:hierarchy_sort.child_filters_block) %></legend>
+<fieldset id="child_filters_fieldset" style="<%= 'display: none;' unless query.hierarchy_enabled %>">
+  <legend><%= l('hierarchy_sort.child_filters_block') %></legend>
   
   <div id="child_filters_info" style="margin-bottom: 10px; color: #666; font-style: italic;">
-    <%= l(:hierarchy_sort.child_filters_info) %>
+    <%= l('hierarchy_sort.child_filters_info') %>
   </div>
   
   <div id="child_filters-table">
@@ -15,10 +14,12 @@
   <div class="add-filter">
     <%= label_tag('child_add_filter_select', l(:label_filter_add)) %>
     <%= select_tag 'child_add_filter_select', 
-        filters_options_for_select(@query), 
+        filters_options_for_select(query), 
         :name => nil,
         :id => 'child_add_filter_select' %>
   </div>
+  
+  <div id="child_icon_copy_source" style="display: none;"><%= sprite_icon('') %></div>
   
   <%= hidden_field_tag 'child_f[]', '', :id => 'child_filters_placeholder' %>
 </fieldset>
@@ -27,25 +28,25 @@
 // Инициализация фильтров подзадач
 var childOperatorLabels = <%= raw_json Query.operators_labels %>;
 var childOperatorByType = <%= raw_json Query.operators_by_filter_type %>;
-var childAvailableFilters = <%= raw_json @query.available_filters_as_json %>;
+var childAvailableFilters = <%= raw_json query.available_filters_as_json %>;
 var childLabelDayPlural = <%= raw_json l(:label_day_plural) %>;
-var childFiltersUrl = <%= raw_json queries_filter_path(:project_id => @query.project.try(:id), :type => @query.type) %>;
+var childFiltersUrl = <%= raw_json queries_filter_path(:project_id => query.project.try(:id), :type => query.type) %>;
 
 $(document).ready(function(){
   // Инициализируем фильтры подзадач, если они есть
-  <% if @query.child_filters.present? %>
-    <% @query.child_filters.each do |field, options| %>
-      addChildFilter("<%= field %>", <%= raw_json options[:operator] %>, <%= raw_json options[:values] %>);
+  <% if query.child_filters.present? %>
+    <% query.child_filters.each do |field, options| %>
+      window.addHierarchyChildFilter("<%= field %>", <%= raw_json options[:operator] %>, <%= raw_json options[:values] %>);
     <% end %>
   <% end %>
+  
+  // Инициализируем обработчик добавления child-фильтров
+  $('#child_add_filter_select').change(function() {
+    var field = $(this).val();
+    if (field) {
+      window.addHierarchyChildFilter(field, 'o', ['']);
+      $(this).val('');
+    }
+  });
 });
-
-// Функция добавления фильтра подзадач
-function addChildFilter(field, operator, values) {
-  // Аналогична стандартной addFilter, но работает с префиксом child_
-  // Реализация будет в hierarchy_sort.js
-  if (typeof window.addHierarchyChildFilter === 'function') {
-    window.addHierarchyChildFilter(field, operator, values);
-  }
-}
 <% end %>

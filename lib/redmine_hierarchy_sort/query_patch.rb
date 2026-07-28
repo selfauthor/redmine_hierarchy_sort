@@ -4,87 +4,106 @@ module RedmineHierarchySort
     extend ActiveSupport::Concern
 
     included do
-      # Блок 1: Геттеры и сеттеры для опций
-      # Они определяются здесь, чтобы стать методами экземпляра класса Query
-      def hierarchy_enabled
+      # Все настройки хранятся в поле options (Hash)
+
+      # --- Геттеры и сеттеры для опций ---
+
+      # Функция: Проверка включено ли дерево подзадач
+      define_method :hierarchy_enabled do
         options[:hierarchy_enabled] == true || options[:hierarchy_enabled] == '1'
       end
 
-      def hierarchy_enabled=(arg)
+      # Функция: Установка состояния дерева подзадач
+      define_method :hierarchy_enabled= do |arg|
         options[:hierarchy_enabled] = (arg == true || arg == '1' ? true : false)
       end
 
-      def show_relations
+      # Функция: Проверка включен ли показ связей
+      define_method :show_relations do
         options[:show_relations] == true || options[:show_relations] == '1'
       end
 
-      def show_relations=(arg)
+      # Функция: Установка состояния показа связей
+      define_method :show_relations= do |arg|
         options[:show_relations] = (arg == true || arg == '1' ? true : false)
       end
 
-      def child_filters
+      # Функция: Получение фильтров для подзадач
+      define_method :child_filters do
         options[:child_filters] || {}
       end
 
-      def child_filters=(arg)
+      # Функция: Установка фильтров для подзадач
+      define_method :child_filters= do |arg|
         options[:child_filters] = arg
       end
 
-      def child_sort_criteria
+      # Функция: Получение критериев сортировки для подзадач
+      define_method :child_sort_criteria do
         options[:child_sort_criteria] || []
       end
 
-      def child_sort_criteria=(arg)
+      # Функция: Установка критериев сортировки для подзадач
+      define_method :child_sort_criteria= do |arg|
         options[:child_sort_criteria] = arg
       end
 
-      # Блок 2: Переопределение методов через alias_method
-      # Важно: alias_method должен быть внутри included, чтобы сработать после загрузки модуля
+      # --- Переопределение методов ---
+
+      # Функция: Переопределение build_from_params для чтения наших параметров из формы
       alias_method :build_from_params_without_hierarchy_sort, :build_from_params
-      alias_method :build_from_params, :build_from_params_with_hierarchy_sort
-    end
+      define_method :build_from_params do |params, defaults={}|
+        # Блок 2: Вызываем оригинальный метод Redmine для обработки стандартных полей
+        build_from_params_without_hierarchy_sort(params, defaults)
 
-    # Блок 3: Новые методы (они автоматически станут instance methods благодаря Concern)
-    
-    # Переопределение build_from_params для чтения наших параметров из формы
-    def build_from_params_with_hierarchy_sort(params, defaults={})
-      # Вызываем оригинальный метод Redmine (сохраненный через alias)
-      build_from_params_without_hierarchy_sort(params, defaults)
+        # Блок 3: Определяем источник параметров (из query[] или из корня params)
+        query_params = params[:query] || {}
 
-      # Определяем источник параметров
-      query_params = params[:query] || {}
+        # Блок 4: Читаем булевы флаги (дерево и связи)
+        self.hierarchy_enabled = query_params[:hierarchy_enabled] || params[:hierarchy_enabled]
+        self.show_relations = query_params[:show_relations] || params[:show_relations]
 
-      # Читаем булевы флаги
-      self.hierarchy_enabled = query_params[:hierarchy_enabled] || params[:hierarchy_enabled]
-      self.show_relations = query_params[:show_relations] || params[:show_relations]
+        # Блок 5: Обработка фильтров подзадач
+        if params[:child_f] || query_params[:child_f]
+          fields = params[:child_f] || query_params[:child_f]
+          operators = params[:child_op] || query_params[:child_op] || {}
+          values = params[:child_v] || query_params[:child_v] || {}
+          
+          self.child_filters = {}
+          add_child_filters(fields, operators, values)
+        end
 
-      # Обработка фильтров подзадач
-      if params[:child_f] || query_params[:child_f]
-        fields = params[:child_f] || query_params[:child_f]
-        operators = params[:child_op] || query_params[:child_op] || {}
-        values = params[:child_v] || query_params[:child_v] || {}
-        self.child_filters = {}
-        add_child_filters(fields, operators, values)
+        # Блок 6: Обработка сортировки подзадач
+        # Параметр приходит как хэш: {"0"=>["tracker", "desc"], "1"=>["", ""], "2"=>["", ""]}
+        if params[:child_sort_criteria].present? || query_params[:child_sort_criteria].present?
+          sort_param = params[:child_sort_criteria] || query_params[:child_sort_criteria]
+          if sort_param.is_a?(Hash)
+            criteria = []
+            sort_param.each do |key, value|
+              if value.is_a?(Array) && value[0].present?
+                criteria << value
+              end
+            end
+            self.child_sort_criteria = criteria
+          else
+            self.child_sort_criteria = Redmine::SortCriteria.new(sort_param).to_a
+          end
+        end
+
+        self
       end
 
-      # Обработка сортировки подзадач
-      if params[:child_sort].present? || query_params[:child_sort].present?
-        sort_param = params[:child_sort] || query_params[:child_sort]
-        self.child_sort_criteria = Redmine::SortCriteria.new(sort_param).to_a
-      end
+      # Функция: Вспомогательный метод для парсинга фильтров подзадач
+      define_method :add_child_filters do |fields, operators, values|
+        return unless fields.present? && operators.present?
 
-      self
-    end
-
-    # Вспомогательный метод для парсинга фильтров подзадач
-    def add_child_filters(fields, operators, values)
-      return unless fields.present? && operators.present?
-      fields.each do |field|
-        if available_filters.has_key?(field)
-          child_filters[field] = {
-            :operator => operators[field],
-            :values => (values[field] || [''])
-          }
+        fields.each do |field|
+          if available_filters.has_key?(field)
+            child_filters[field] = {
+              :operator => operators[field],
+              :values => (values[field] || [''])
+            }
+          end
         end
       end
     end

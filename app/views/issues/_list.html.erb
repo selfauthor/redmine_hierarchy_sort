@@ -1,4 +1,10 @@
 <%# app/views/issues/_list.html.erb %>
+<%# Подключаем assets плагина для списка задач %>
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'hierarchy_sort', plugin: 'redmine_hierarchy_sort' %>
+  <%= stylesheet_link_tag 'hierarchy_sort', plugin: 'redmine_hierarchy_sort' %>
+<% end %>
+
 <% query_options = nil unless defined?(query_options) %>
 <% query_options ||= {} %>
 <%= form_tag({}, :data => {:cm_url => issues_context_menu_path}) do -%>
