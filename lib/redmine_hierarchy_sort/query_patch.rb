@@ -48,6 +48,19 @@ module RedmineHierarchySort
         options[:child_sort_criteria] = arg
       end
 
+      # --- Переопределение css_classes для добавления класса hierarchy-sort ---
+      # Функция: Возвращает CSS-классы для таблицы списка задач
+      # Блок 1: При включённой иерархической сортировке добавляем класс hierarchy-sort
+      # для возможности кастомизации стилей пользователем в будущем
+      alias_method :css_classes_without_hierarchy, :css_classes
+      define_method :css_classes do
+        classes = css_classes_without_hierarchy
+        if hierarchy_enabled
+          classes = classes.present? ? "#{classes} hierarchy-sort" : "hierarchy-sort"
+        end
+        classes
+      end
+
       # --- Переопределение методов ---
 
       # Функция: Переопределение build_from_params для чтения наших параметров из формы
