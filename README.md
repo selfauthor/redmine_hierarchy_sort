@@ -138,6 +138,8 @@
 - **Пагинацию по корням:** На странице отображается N корневых веток (например, 25), каждая со всеми своими потомками
 - **Иконки связей:** Если включена опция "Показывать связи", у задач со связями появится иконка 
 
+После того, как в запросе будет применена опция **"Дерево подзадач"**, в классах основной таблицы будет добавлен специальный класс `hierarchy-sort`. С его помощью можно настроить специальные стили отображения вложенных в таблицу элементов.
+
 ### Работа со связями
 
 1. **Просмотр связей:**
@@ -192,19 +194,18 @@
 redmine_hierarchy_sort/
 ├── init.rb                          # Инициализация плагина
 ├── config/
-│   ── locales/
+│   └─ locales/
 │       ├── ru.yml                   # Русская локализация
 │       └── en.yml                   # Английская локализация
 ├── app/
-│   ├── models/
-│   │   ├── query_patch.rb           # Патч модели Query
-│   │   └── issue_query_patch.rb     # Патч модели IssueQuery
 │   ├── views/
 │   │   ├── queries/
 │   │   │   ├── _hierarchy_options.html.erb
+│   │   │   ├── _form.html.erb
 │   │   │   ├── _child_filters.html.erb
 │   │   │   └── _child_sort_criteria.html.erb
-│   │   ── issues/
+│   │   └─ issues/
+│   │       ├── _list.html.erb
 │   │       ├── _relation_icon.html.erb
 │   │       └── _relation_popover.html.erb
 │   └── helpers/
@@ -212,17 +213,13 @@ redmine_hierarchy_sort/
 ├── lib/
 │   └── redmine_hierarchy_sort/
 │       ├── hierarchy_builder.rb     # Ядро алгоритма
-│       ├── relation_loader.rb       # Загрузка связей
-│       ├── query_options_serializer.rb
-│       └── sql_builder.rb
-├── assets/
-│   ├── javascripts/
-│   │   └── hierarchy_sort.js
-│   └── stylesheets/
-│       └── hierarchy_sort.css
-└── test/
-    ├── unit/
-    └── functional/
+│       ├── issue_query_path.rb
+│       └── query_path.rb
+└── assets/
+    ├── javascripts/
+    │   └── hierarchy_sort.js
+    └── stylesheets/
+        └── hierarchy_sort.css
 ```
 
 ### Алгоритм работы
