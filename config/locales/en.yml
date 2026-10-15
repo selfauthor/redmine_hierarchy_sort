@@ -1,5 +1,7 @@
 # redmine_hierarchy_sort/config/locales/en.yml
 en:
+  label_attribute_of_parent: "Parent task: %{name}"
+
   hierarchy_sort:
     # Checkboxes in "Options" block
     tree_checkbox: "Subtasks tree"

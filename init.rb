@@ -7,7 +7,7 @@ Redmine::Plugin.register :redmine_hierarchy_sort do
   author_url 'https://a2ya.ru'
   url 'https://github.com/selfauthor/redmine_hierarchy_sort'
   description 'Плагин для иерархической сортировки задач с сохранением древовидной структуры и визуализацией связей'
-  version '1.1.2'
+  version '2.0.4'
   requires_redmine :version_or_higher => '5.0.0'
 end
 
