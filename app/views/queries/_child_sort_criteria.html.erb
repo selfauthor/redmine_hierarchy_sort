@@ -12,7 +12,10 @@
   <%= label_tag "child_sort_criteria_attribute_" + i.to_s,
       l(:description_query_sort_criteria_attribute), :class => "hidden-for-sighted" %>
   <%= select_tag("child_sort_criteria[#{i}][]",
-      options_for_select([[]] + query.available_columns.select(&:sortable?).collect {|column| [column.caption, column.name.to_s]}, 
+      options_for_select([[]] + query.available_columns
+                                  .select(&:sortable?)
+                                  .reject { |column| column.name.to_s.start_with?('parent_') }
+                                  .collect { |column| [column.caption, column.name.to_s] }, 
                         query.child_sort_criteria[i] ? query.child_sort_criteria[i][0] : nil),
       :id => "child_sort_criteria_attribute_" + i.to_s)%>
   <%= label_tag "child_sort_criteria_direction_" + i.to_s,

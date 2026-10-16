@@ -13,8 +13,12 @@
   
   <div class="add-filter">
     <%= label_tag('child_add_filter_select', l(:label_filter_add)) %>
-    <%= select_tag 'child_add_filter_select', 
-        filters_options_for_select(query), 
+    <%= select_tag 'child_add_filter_select',
+        options_for_select(
+          query.available_filters
+            .reject { |field, _options| field.to_s.start_with?('parent.') }
+            .map { |field, options| [options[:name], field] }
+        ),
         :name => nil,
         :id => 'child_add_filter_select' %>
   </div>
@@ -28,7 +32,7 @@
 // Инициализация фильтров подзадач
 var childOperatorLabels = <%= raw_json Query.operators_labels %>;
 var childOperatorByType = <%= raw_json Query.operators_by_filter_type %>;
-var childAvailableFilters = <%= raw_json query.available_filters_as_json %>;
+var childAvailableFilters = <%= raw_json query.available_filters_as_json.reject { |field, _options| field.to_s.start_with?('parent.') } %>;
 var childLabelDayPlural = <%= raw_json l(:label_day_plural) %>;
 var childFiltersUrl = <%= raw_json queries_filter_path(:project_id => query.project.try(:id), :type => query.type) %>;
 

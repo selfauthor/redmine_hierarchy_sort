@@ -1,6 +1,7 @@
 # redmine_hierarchy_sort/config/locales/ru.yml
 ru:
-  label_attribute_of_parent: "Родительская задача: %{name}"
+  label_attribute_of_parent: "Верхн.: %{name}"
+  label_parent_issue_filters: "Родительская задача"
 
   hierarchy_sort:
     # Чекбоксы в блоке "Опции"

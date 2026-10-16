@@ -48,7 +48,7 @@ module RedmineHierarchySort
           columns << QueryColumn.new(
             "parent_#{attribute}".to_sym,
             :sortable => sortable_sql,
-            :caption => "#{l(:field_parent_issue)}: #{l(caption_key)}"
+            :caption => l(:label_attribute_of_parent, name: l(caption_key))
           )
         end
 
@@ -110,7 +110,7 @@ module RedmineHierarchySort
           columns << QueryColumn.new(
             "parent_#{association}".to_sym,
             :sortable => sortable_sql,
-            :caption => "#{l(:field_parent_issue)}: #{l(caption_key)}"
+            :caption => l(:label_attribute_of_parent, name: l(caption_key))
           )
         end
 
@@ -136,7 +136,7 @@ module RedmineHierarchySort
           columns << QueryColumn.new(
             "parent_#{association}".to_sym,
             :sortable => sortable_sql,
-            :caption => "#{l(:field_parent_issue)}: #{l(caption_key)}"
+            :caption => l(:label_attribute_of_parent, name: l(caption_key))
           )
         end
 
@@ -197,7 +197,7 @@ module RedmineHierarchySort
           # Используем метод caption, чтобы штатный механизм отображения
           # заголовков Redmine получил нужную подпись.
           parent_column.define_singleton_method(:caption) do
-            "#{l(:field_parent_issue)}: #{custom_field.name}"
+            l(:label_attribute_of_parent, name: custom_field.name)
           end
 
           columns << parent_column
@@ -392,7 +392,7 @@ module RedmineHierarchySort
           source_field_name = source_filter&.instance_variable_get(:@options)&.dig(:name)
           source_field_name ||= l("field_#{source_field.delete_suffix('_id')}")
 
-          parent_filter_options[:name] = "#{l(:field_parent_issue)}: #{source_field_name}"
+          parent_filter_options[:name] = l(:label_attribute_of_parent, name: source_field_name)
 
           add_available_filter("parent.#{source_field}", parent_filter_options)
         end
@@ -435,4 +435,4 @@ module RedmineHierarchySort
     end
   end
 end
-# v2610151439
+# v2610161122
